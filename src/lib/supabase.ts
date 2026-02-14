@@ -267,6 +267,24 @@ export async function fetchBusById(id: string) {
   return data as Bus;
 }
 
+export async function fetchPassengersByBusId(busId: string) {
+  const { data, error } = await supabase
+    .from('passengers')
+    .select(`
+      *,
+      bus:buses(*)
+    `)
+    .eq('bus_id', busId)
+    .order('created_at', { ascending: false });
+  
+  if (error) {
+    console.error('Error fetching passengers for bus:', error);
+    throw error;
+  }
+  
+  return data as Passenger[];
+}
+
 export async function addBus(bus: Omit<Bus, 'id' | 'created_at' | 'bus_number'>) {
   // Get the next bus number for this destination
   const { data: lastBus } = await supabase
@@ -289,6 +307,22 @@ export async function addBus(bus: Omit<Bus, 'id' | 'created_at' | 'bus_number'>)
   }
   
   return data[0] as Bus;
+}
+
+export async function updateBus(id: string, updates: Partial<Bus>) {
+  const { data, error } = await supabase
+    .from('buses')
+    .update(updates)
+    .eq('id', id)
+    .select()
+    .single();
+  
+  if (error) {
+    console.error('Error updating bus:', error);
+    throw error;
+  }
+  
+  return data as Bus;
 }
 
 export async function updatePassenger(id: string, updatedFields: Partial<Passenger>) {
