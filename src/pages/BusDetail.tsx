@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { fetchBusById, fetchPassengers, Passenger } from '@/lib/supabase';
+import { fetchBusById, fetchPassengersByBusId, Passenger } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { ArrowLeft, SearchIcon, UsersIcon } from 'lucide-react';
@@ -11,6 +11,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import PassengerCard from '@/components/passenger/PassengerCard';
 import { Label } from '@/components/ui/label';
+import { EditBusDialog } from '@/components/bus/EditBusDialog';
 
 const BusDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -26,14 +27,13 @@ const BusDetail = () => {
     enabled: !!id
   });
   
-  // Fetch all passengers
-  const { data: allPassengers = [], isLoading: isLoadingPassengers } = useQuery({
-    queryKey: ['passengers'],
-    queryFn: fetchPassengers
+  // Fetch passengers for this bus
+  const { data: busPassengers = [], isLoading: isLoadingPassengers } = useQuery({
+    queryKey: ['passengers', id],
+    queryFn: () => fetchPassengersByBusId(id!),
+    enabled: !!id
   });
   
-  // Filter passengers for this bus
-  const busPassengers = allPassengers.filter(passenger => passenger.bus_id === id);
   
   // Apply search and gender filters
   const filteredPassengers = busPassengers.filter(passenger => {
@@ -95,6 +95,7 @@ const BusDetail = () => {
                 </span>
                 <h2 className="text-xl font-semibold">{bus.destination}</h2>
               </div>
+              <EditBusDialog bus={bus} />
             </div>
             
             <div className="space-y-3 text-sm">
@@ -116,6 +117,21 @@ const BusDetail = () => {
               <div className="flex justify-between pt-1">
                 <span className="text-muted-foreground">Tarif Per Penumpang</span>
                 <span className="font-semibold text-primary">Rp. {bus.fare_per_passenger.toLocaleString("id-ID")}</span>
+              </div>
+
+               <div className="flex justify-between pt-1">
+                <span className="text-muted-foreground">Jumlah Makan</span>
+                <span className="font-medium">{bus.meal_count}x</span>
+              </div>
+
+               <div className="flex justify-between pt-1">
+                <span className="text-muted-foreground">Harga Makan</span>
+                <span className="font-medium">Rp. {bus.meal_price.toLocaleString("id-ID")}</span>
+              </div>
+              
+               <div className="flex justify-between pt-1 border-t mt-2">
+                <span className="text-muted-foreground font-semibold">Total Harga Makan</span>
+                <span className="font-bold text-primary">Rp. {(bus.meal_count * bus.meal_price).toLocaleString("id-ID")}</span>
               </div>
             </div>
             

@@ -43,9 +43,9 @@ const AddPassengerForm = ({ isOpen, onClose, periodId }: AddPassengerFormProps) 
   
   // List of petugas options
   const petugasList = [
-    'Raja Faza', 'Yusuf Apri', 'Andri Falah', 'Raul', 'Abdul Wahab', 'Anas Titah Prayogi', 
-    'Rama Saputra Halim', 'Suhandoko', 'Jibril Aksan', 'Brilian Rizky', 'Abdurrahman', 'Johan Mahendra',
-    'Bima Syafaat', 'Diaz Pambudi'
+    'Raja Faza', 'Hanif Nabila', 'Raul', 'Jibril Aksan', 'Abdurrahman', 'Bima Syafaat', 'Diaz Pambudi',
+    'Zalfan Ahmad', 'Ilham Saputra', 'Muhammad Rayhan', 'Hilman Rizky', 'Muhammad Rifqi Aldiansyah',
+    'Chabibulloh Dawam',
   ];
   
   const queryClient = useQueryClient();
